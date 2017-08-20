@@ -29,9 +29,9 @@ RUN sudo apt-get install -y python-rosinstall python-rosinstall-generator python
 # Install catkin_tools - See https://catkin-tools.readthedocs.io/en/latest/installing.html
 RUN sudo apt-get install -y python-catkin-tools
 
-# Pip and sympy
+# Pip and sympy/sklearn/scipy
 RUN sudo apt-get install -y python-pip
-RUN pip install sympy
+RUN pip install sympy sklearn scipy
 
 # This one needs to be installed manually... - See https://github.com/qboticslabs/mastering_ros/issues/7
 RUN sudo apt-get install -y ros-kinetic-joint-state-controller
@@ -69,6 +69,8 @@ RUN cd && \
     sudo python setup.py install && \
     sudo apt-get install pcl-tools && \
     cd - && \
+    rosdep install --from-paths RoboND-Perception-Exercises/Exercise-2 --ignore-src --rosdistro=kinetic -y && \
+    rosdep install --from-paths RoboND-Perception-Exercises/Exercise-3 --ignore-src --rosdistro=kinetic -y && \
     sudo rm -r RoboND-Perception-Exercises
 
 # Clean
@@ -81,3 +83,4 @@ RUN sudo apt-get clean && \
 # These should be a config in the launch files?
 RUN echo "export GAZEBO_MODEL_PATH=~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/models:\$GAZEBO_MODEL_PATH" >> ~/.bashrc
 RUN echo "export GAZEBO_MODEL_PATH=~/catkin_ws/src/RoboND-Perception-Project/pr2_robot/models:\$GAZEBO_MODEL_PATH" >> ~/.bashrc
+RUN echo "export GAZEBO_MODEL_PATH=~/catkin_ws/src/sensor_stick/models:\$GAZEBO_MODEL_PATH" >> ~/.bashrc
