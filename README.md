@@ -1,3 +1,6 @@
+[![Docker Stars](https://img.shields.io/docker/stars/yrahal/udacity-robond.svg)](https://hub.docker.com/r/yrahal/udacity-robond/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/yrahal/udacity-robond.svg)](https://hub.docker.com/r/yrahal/udacity-robond/)
+
 # udacity-robond
 <img src="images/screenshot.png" width="600"/>
 
