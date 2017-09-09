@@ -31,7 +31,7 @@ and this [YouTube video](https://youtu.be/389nucLb7ZE) useful.
   the host.
   * Maps the current directory on the host to `/src` on the container (which is the default working
   directory).
-  * Maps the Docker volume `bender_home` to the `bender` home directory on the container. This volume
+  * Maps the Docker volume `bender-home` to the `bender` home directory on the container. This volume
   exists on the host and is created on the first run. This is useful to persist the preferences
   between sessions, but is not required.
 * `run_nvidia.sh`: Another script provided for convenience, which is useful to run when connected through VNC
