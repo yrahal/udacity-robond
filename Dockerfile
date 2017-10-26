@@ -4,6 +4,9 @@ MAINTAINER Youcef Rahal
 
 USER root
 
+# TODO Until the python3/python2 issue is sorted out - Remove anaconda from the path
+ENV PATH /usr/local/nvidia/bin:/opt/VirtualGL/bin:/opt/node/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 # Rename orion user/group to bender
 RUN usermod -l bender -m -d /home/bender orion
 RUN groupmod -n bender orion
