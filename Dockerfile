@@ -20,16 +20,23 @@ ARG conda_add=${utils_bin_dir}/conda-add
 ARG conda_remove=${utils_bin_dir}/conda-remove
 
 # See https://stackoverflow.com/questions/370047/what-is-the-most-elegant-way-to-remove-a-path-from-the-path-variable-in-bash
-RUN echo "#!/bin/bash\n\n" \
-         "source ${conda_remove}\n" \
-         "export PATH=${conda_bin_dir}:\${PATH}\n" \
-         "source activate cpu" | sudo tee ${conda_add} > /dev/null
-RUN echo "#!/bin/bash\n\n" \
-         "source ${conda_bin_dir}/deactivate\n" \
-         "export PATH=\$(echo \${PATH} | awk -v RS=: -v ORS=: '/anaconda/ {next} {print}' | sed 's/:*$//')" | sudo tee ${conda_remove} > /dev/null
-
-RUN echo "alias conda-add='source ${conda_add}'" >> ~/.bash_aliases
-RUN echo "alias conda-remove='source ${conda_remove}'" >> ~/.bash_aliases
+RUN printf "%s\n" \
+           "#!/bin/bash" \
+           "" \
+           "source ${conda_remove}" \
+           "export PATH=${conda_bin_dir}:\${PATH}" \
+           "source activate cpu" | sudo tee ${conda_add} > /dev/null \
+    && \
+    printf "%s\n" \
+           "#!/bin/bash" \
+           "" \
+           "source ${conda_bin_dir}/deactivate" \
+           "export PATH=\$(echo \${PATH} | awk -v RS=: -v ORS=: '/anaconda/ {next} {print}' | sed 's/:*$//')" | sudo tee ${conda_remove} > /dev/null \
+    && \
+    printf "%s\n" \
+           "" \
+           "alias conda-add='source ${conda_add}'" \
+           "alias conda-remove='source ${conda_remove}'" >> ~/.bash_aliases
 
 # By default, we'll remove Conda from the PATH.
 # The user can still run 'conda-add' in a terminal to bring it back.
@@ -46,7 +53,9 @@ RUN sudo apt-get update
 RUN sudo apt-get install -y ros-kinetic-desktop-full
 RUN sudo rosdep init
 RUN rosdep update
-RUN echo "\nsource /opt/ros/kinetic/setup.bash" >> ~/.bashrc
+RUN printf "%s\n" \
+           "" \
+           "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc
 #RUN source ~/.bashrc
 RUN sudo apt-get install -y python-rosinstall python-rosinstall-generator python-wstool build-essential
 
@@ -107,7 +116,8 @@ RUN sudo apt-get clean -y && \
 #echo "source ~/catkin_ws/devel/setup.bash"  >> ~/.bashrc
 
 # These should be a config in the launch files?
-RUN echo "\n" \
-         "export GAZEBO_MODEL_PATH=~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/models:\$GAZEBO_MODEL_PATH\n" \
-         "export GAZEBO_MODEL_PATH=~/catkin_ws/src/RoboND-Perception-Project/pr2_robot/models:\$GAZEBO_MODEL_PATH\n" \
-         "export GAZEBO_MODEL_PATH=~/catkin_ws/src/sensor_stick/models:\$GAZEBO_MODEL_PATH" >> ~/.bashrc
+RUN printf "%s\n" \
+           "" \
+           "export GAZEBO_MODEL_PATH=~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/models:\$GAZEBO_MODEL_PATH" \
+           "export GAZEBO_MODEL_PATH=~/catkin_ws/src/RoboND-Perception-Project/pr2_robot/models:\$GAZEBO_MODEL_PATH" \
+           "export GAZEBO_MODEL_PATH=~/catkin_ws/src/sensor_stick/models:\$GAZEBO_MODEL_PATH" >> ~/.bashrc
