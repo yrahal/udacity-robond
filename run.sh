@@ -11,6 +11,7 @@ gpu=0
 jupyter=0
 display=0
 vgl=0
+novnc=0
 privileged=0
 default_ports_flag=1
 default_volumes_flag=1
@@ -40,6 +41,8 @@ usage() {
     -d|--display   Set the container to display into the host.
     -h|-help       Print this message and exit.
 
+    --novnc        Run a noVNC server along with TurboVNC to allow for browser
+                   access. Needs port 6080 of the container to be mapped.
     --privileged   Run the container in privileged mode.
     --no-def-ports Ignore default port mappings.
     --no-def-vols  Ignore default volume mappings.
@@ -66,6 +69,7 @@ while [ "$#" -gt 0 ]; do
     --gpu) gpu=1; shift 1;;
     --jupyter) jupyter=1; shift 1;;
     --display) display=1; shift 1;;
+    --novnc) novnc=1; shift 1;;
     --privileged) privileged=1; shift 1;;
     --no-def-ports) default_ports_flag=0; shift 1;;
     --no-def-vols) default_volumes_flag=0; shift 1;;
@@ -139,6 +143,11 @@ for item in "${volumes[@]}"; do
     command_to_run+=(-v ${item}:${item})
   fi
 done
+
+# Set the $NOVNC variable on the container in order to start the noVNC server
+if [ $novnc -eq 1 ] ; then
+  command_to_run+=(-e NOVNC=1)
+fi
 
 # Add privileged if needed
 if [ $privileged -eq 1 ] ; then
