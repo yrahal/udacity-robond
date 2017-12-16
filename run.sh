@@ -4,7 +4,7 @@ user=bender
 image=yrahal/udacity-robond
 ports=()
 # RosCore 11311
-default_ports=(5901 6080 8888 4567)
+default_ports=(5901 6080 8888 4000 4567)
 volumes=()
 default_volumes=("$PWD":"/src" "$user-home":"/home/$user")
 gpu=0
@@ -12,6 +12,8 @@ jupyter=0
 display=0
 vgl=0
 novnc=0
+nomachine=0
+chrome=0
 privileged=0
 default_ports_flag=1
 default_volumes_flag=1
@@ -43,6 +45,12 @@ usage() {
 
     --novnc        Run a noVNC server along with TurboVNC to allow for browser
                    access. Needs port 6080 of the container to be mapped.
+    --nomachine    Run a NoMachine server along with TurboVNC to allow for
+                   audio and hardware access. Needs port 4000 of the container
+                   to be mapped.
+    --chrome       Running Chrome inside the container requires adding extra
+                   capabilities to the container. This flag ensures they are
+                   added.
     --privileged   Run the container in privileged mode.
     --no-def-ports Ignore default port mappings.
     --no-def-vols  Ignore default volume mappings.
@@ -70,6 +78,8 @@ while [ "$#" -gt 0 ]; do
     --jupyter) jupyter=1; shift 1;;
     --display) display=1; shift 1;;
     --novnc) novnc=1; shift 1;;
+    --nomachine) nomachine=1; shift 1;;
+    --chrome) chrome=1; shift 1;;
     --privileged) privileged=1; shift 1;;
     --no-def-ports) default_ports_flag=0; shift 1;;
     --no-def-vols) default_volumes_flag=0; shift 1;;
@@ -144,9 +154,19 @@ for item in "${volumes[@]}"; do
   fi
 done
 
-# Set the $NOVNC variable on the container in order to start the noVNC server
+# Set the $LAUNCH_NOVNC variable on the container in order to start the noVNC server
 if [ $novnc -eq 1 ] ; then
-  command_to_run+=(-e NOVNC=1)
+  command_to_run+=(-e LAUNCH_NOVNC=1)
+fi
+
+# Add capabilities to enable the NoMachine server and set the LAUNCH_NOMACHINE variable
+if [ $nomachine -eq 1 ] ; then
+  command_to_run+=(-e LAUNCH_NOMACHINE=1 --device /dev/fuse --cap-add SYS_ADMIN --cap-add=SYS_PTRACE)
+fi
+
+# Add capabilities to allow proper execution of Chrome
+if [ $chrome -eq 1 ] ; then
+  command_to_run+=(--cap-add=SYS_ADMIN)
 fi
 
 # Add privileged if needed
