@@ -108,6 +108,20 @@ RUN bash -c "source ${conda_remove} && \
              rosdep install --from-paths RoboND-Perception-Exercises/Exercise-3 --ignore-src --rosdistro=kinetic -y && \
              sudo rm -r RoboND-Perception-Exercises"
 
+# Term 2 EKF
+RUN cd && \
+    mkdir src && \
+    cd src && \
+    git clone https://github.com/turtlebot/turtlebot_simulator && \
+    git clone https://github.com/turtlebot/turtlebot && \
+    cd .. && \
+    rosdep install --from-paths src --ignore-src --rosdistro=kinetic -y && \
+    rm -rf src
+
+# rqt_multiplot
+RUN sudo apt-get install -y ros-kinetic-rqt ros-kinetic-rqt-multiplot libqwt-dev && \
+    rm -f ~/.config/ros.org/rqt_gui.ini
+
 # Clean
 RUN sudo apt-get clean -y && \
     sudo apt-get autoremove -y && \
